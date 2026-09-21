@@ -357,8 +357,8 @@ function splitName(k){
 function renderCuisineMenu(node){
   document.getElementById('content').innerHTML = `
     <div class="menu-card">
-      <div class="menu-title">สัญชาติอาหารวันนี้</div>
-      <div class="menu-subtitle">— กดเลือกหมวดที่อยากลิ้มลอง —</div>
+      <div class="menu-title">ตัวช่วยเลือกเมนูอาหารประจำวัน</div>
+      <div class="menu-subtitle">— กดเลือกหมวดอาหารที่คุณอยากลิ้มลองได้เลย! —</div>
       <div class="menu-list">
         ${Object.keys(node).map(k=>{
           const [th,eng] = splitName(k);
