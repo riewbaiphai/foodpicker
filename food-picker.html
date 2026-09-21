@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>เลือกเมนูวันนี้กินอะไรดี</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf7f2; --card:#ffffff; --ink:#2b2420; --sub:#7a6f63;
+  --accent:#e2622a; --accent-ink:#ffffff; --line:#ece5db;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1c1815; --card:#26211d; --ink:#f1ece4; --sub:#a89c8d;
+    --accent:#f0783f; --accent-ink:#1c1815; --line:#3a332c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1c1815; --card:#26211d; --ink:#f1ece4; --sub:#a89c8d;
+  --accent:#f0783f; --accent-ink:#1c1815; --line:#3a332c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Noto Sans Thai",system-ui,sans-serif;
+  min-height:100vh;display:flex;justify-content:center;padding:20px 14px 60px}
+.wrap{width:100%;max-width:560px}
+h1{font-size:1.3rem;margin:6px 0 4px;text-align:center}
+.sub{color:var(--sub);text-align:center;font-size:.9rem;margin-bottom:18px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;font-size:.82rem;color:var(--sub)}
+.crumbs span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 9px}
+.crumbs span.current{color:var(--accent);border-color:var(--accent)}
+.grid{display:grid;gap:10px}
+button.opt{
+  display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);
+  border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:1rem;
+  cursor:pointer;transition:.15s;
+}
+button.opt:active{transform:scale(.98)}
+button.opt:hover{border-color:var(--accent)}
+.dish{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  font-size:1.05rem;text-align:center;font-weight:600;
+}
+.dishlist{display:grid;gap:8px;margin-top:4px}
+.nav{display:flex;gap:8px;margin-top:22px}
+.nav button{flex:1;padding:12px;border-radius:10px;border:none;font-size:.95rem;cursor:pointer}
+.btn-back{background:var(--card);color:var(--ink);border:1px solid var(--line)!important}
+.btn-home{background:var(--accent);color:var(--accent-ink)}
+.result{text-align:center;padding:20px 0}
+.result .emoji{font-size:2.2rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h2{margin:0 0 10px;font-size:1.15rem;text-align:center;color:var(--accent)}
+.card h3{margin:14px 0 6px;font-size:.9rem;color:var(--sub)}
+.card ul{margin:0;padding-left:20px;font-size:.92rem;line-height:1.6}
+.kcal-big{font-size:1.6rem;font-weight:700;text-align:center;color:var(--accent)}
+.macros{display:flex;justify-content:space-around;margin-top:6px;font-size:.85rem;color:var(--sub)}
+.exwrap{display:grid;gap:6px;margin-top:4px}
+.exrow{display:flex;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px;font-size:.9rem}
+.disclaimer{font-size:.72rem;color:var(--sub);margin-top:14px;line-height:1.5;text-align:center}
+.otherbtn{margin-top:14px;width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font-size:.9rem}
+
+/* ---- หน้าเลือกสัญชาติอาหาร: ดีไซน์เมนูร้านอาหาร ---- */
+body.at-menu{
+  --bg:#f6ecd9; --card:#fbf5e8; --ink:#3a2a1a; --sub:#8a7355;
+  --accent:#8c1f28; --line:#c9b28a;
+}
+@media (prefers-color-scheme: dark){
+  body.at-menu:not([data-theme="light"]){
+    --bg:#1c140c; --card:#241a10; --ink:#ecdfc6; --sub:#b39c78;
+    --accent:#d79a4b; --line:#4a3c26;
+  }
+}
+body.at-menu[data-theme="dark"]{
+  --bg:#1c140c; --card:#241a10; --ink:#ecdfc6; --sub:#b39c78;
+  --accent:#d79a4b; --line:#4a3c26;
+}
+body.at-menu{font-family:'Noto Serif Thai',serif}
+body.at-menu h1{display:none}
+body.at-menu .sub{display:none}
+body.at-menu .crumbs{display:none}
+.menu-card{border:1px solid var(--line);padding:30px 22px 22px;position:relative;background:var(--card)}
+.menu-card::before,.menu-card::after{content:'';position:absolute;left:14px;right:14px;height:1px;background:var(--line)}
+.menu-card::before{top:9px}
+.menu-card::after{bottom:9px}
+.menu-title{font-size:1.55rem;font-weight:700;text-align:center;margin:0 0 6px;letter-spacing:.03em}
+.menu-subtitle{text-align:center;font-size:.85rem;color:var(--sub);font-style:italic;margin-bottom:20px}
+.menu-list{display:flex;flex-direction:column}
+.menu-row{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;
+  border-top:1px solid var(--line);padding:16px 2px;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink)}
+.menu-list .menu-row:first-child{border-top:none}
+.menu-row:hover .name{color:var(--accent)}
+.menu-row-text{display:flex;flex-direction:column;line-height:1.3}
+.menu-row .name{font-size:1.08rem;font-weight:700}
+.menu-row .eng{font-size:.7rem;color:var(--sub);font-style:italic}
+.menu-row .leader{flex:1;min-width:16px;border-bottom:1px dotted var(--line);margin:0 4px 5px}
+.menu-row .count{font-size:.78rem;color:var(--accent);font-weight:600;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🍜 วันนี้กินอะไรดี?</h1>
+  <div class="sub" id="subtitle">เลือกไปเรื่อยๆ จนกว่าจะเจอเมนูที่ใช่</div>
+  <div class="crumbs" id="crumbs"></div>
+  <div id="content"></div>
+  <div class="nav" id="nav" style="display:none">
+    <button class="btn-back" id="backBtn">← ย้อนกลับ</button>
+    <button class="btn-home" id="homeBtn">🏠 เริ่มใหม่</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+"อาหารไทย (Thai Cuisine)":{
+  "จานข้าวเดี่ยว (Single-Dish Rice)":{
+    "ผัด (Stir-fried Rice)":["ข้าวกะเพราหมูกรอบ","ข้าวกะเพราเนื้อสับ","ข้าวผัดปู","ข้าวผัดต้มยำกุ้ง","ข้าวผัดพริกเผาหมู","ข้าวผัดกุนเชียง","ข้าวผัดคะน้าหมูกรอบ","ข้าวผัดพริกแกงไก่","ข้าวผัดแหนม","ข้าวผัดสับปะรดกุ้ง"],
+    "ราดซอส & ทอด (Topped & Fried Rice)":["ข้าวหมูกระเทียม","ข้าวไข่เจียวหมูสับ","ข้าวไข่ข้นกุ้ง","ข้าวหมูแดงหมูกรอบ","ข้าวหน้าเป็ดย่าง","ข้าวขาหมู","ข้าวหมูทอดพริกสด","ข้าวคลุกกะปิ"],
+    "ต้ม & ข้าวต้ม (Soup & Porridge Rice)":["ข้าวต้มกุ้ง","ข้าวต้มปลากะพง","ข้าวต้มหมูสับทรงเครื่อง","โจ๊กหมูใส่ไข่เยี่ยวม้า","ข้าวต้มปลาช่อน"]
+  },
+  "จานเส้น (Noodles)":{
+    "ผัด & คั่ว (Stir-fried Noodles)":["ผัดไทยกุ้งสด","ผัดซีอิ๊วหมู","ก๋วยเตี๋ยวคั่วไก่","ผัดมาม่าขี้เมาทะเล","ราดหน้าหมูหมัก","หมี่ผัดกระเฉดกุ้ง","ผัดหมี่โคราช","ผัดวุ้นเส้นทะเล"],
+    "น้ำ & ซุป (Soup Noodles)":["ก๋วยเตี๋ยวเรือน้ำตกเนื้อ","ก๋วยเตี๋ยวต้มยำมะนาวสด","ก๋วยจั๊บน้ำใส","เย็นตาโฟต้มยำ","บะหมี่เกี๊ยวหมูแดง","ก๋วยเตี๋ยวหมูตุ๋น"],
+    "ขนมจีน & เส้นสด (Fresh Noodles & Khanom Chin)":["ขนมจีนน้ำยาปูกระทิ","ขนมจีนน้ำเงี้ยว","ข้าวซอยไก่","ขนมจีนซาวน้ำ","ขนมจีนน้ำพริก"]
+  },
+  "กับข้าว & จานกลาง (Shared Mains)":{
+    "แกง & ต้ม (Curries & Soups)":["ต้มยำกุ้งน้ำข้น","ต้มข่าไก่","แกงเขียวหวานไก่","แกงเผ็ดเป็ดย่าง","แกงส้มชะอมกุ้ง","แกงมัสมั่นเนื้อ","ต้มแซ่บกระดูกหมู","แกงเทโพหมูกรอบ","แกงป่าหมูป่า","ต้มโคล้งปลาแห้ง"],
+    "ผัด & คั่ว (Stir-fried Dishes)":["ปูผัดผงกะหรี่","ผัดผักบุ้งไฟแดง","ผัดคะน้าหมูกรอบ","กุ้งผัดสะตอกะปิ","หมูกรอบผัดพริกขิง","ผัดเผ็ดปลาดุกกรอบ"],
+    "ทอด, ย่าง & อบ (Fried, Grilled & Baked)":["ปลากะพงทอดน้ำปลา","ไก่ทอดหาดใหญ่","คอหมูย่าง","ไก่ย่างวิเชียรบุรี","กุ้งอบวุ้นเส้น","ทอดมันกุ้ง","ปลาช่อนแดดเดียวทอด","หมูปิ้งจิ้มแจ่ว"],
+    "ยำ, ตำ & ลาบ (Spicy Salads & Northeast Style)":["ส้มตำไทย","ส้มตำปูปลาร้า","ยำวุ้นเส้นหมูสับรวมมิตร","ยำแซลมอนน้ำปลาร้า","ลาบหมู","น้ำตกเนื้อ","ยำมาม่าเครื่องแน่น","ตำซั่ว","ลาบเป็ด","พล่ากุ้ง"]
+  },
+  "อาหารพื้นถิ่น (Regional Specialties)":{
+    "เหนือ (Northern)":["แกงฮังเล","ไส้อั่ว","น้ำพริกหนุ่ม","แกงโฮะ"],
+    "ใต้ (Southern)":["แกงไตปลา","คั่วกลิ้งหมู","ข้าวยำปักษ์ใต้","แกงเหลืองปลา"]
+  }
+},
+"อาหารญี่ปุ่น (Japanese Cuisine)":{
+  "จานข้าว (Rice Dishes / Donburi)":{
+    "ย่าง & ทอด (Fried & Grilled Donburi)":["ข้าวหน้าเนื้อวากิว (Gyu-don)","ข้าวหน้าหมูทอดทงคัตสึ (Katsudon)","ข้าวหน้าแซลมอนเทริยากิ","ข้าวหน้าหมูสามชั้นย่างซอส (Butadon)","ข้าวหน้าโอยาโกะด้ง (Oyakodon)"],
+    "แกงกะหรี่ (Japanese Curry)":["ข้าวแกงกะหรี่หมูทอด","ข้าวแกงกะหรี่เนื้อวัว","ข้าวแกงกะหรี่ชีสเยิ้ม"],
+    "ข้าวหน้าปลาดิบ & ดอง (Raw & Cured Donburi)":["ข้าวหน้าแซลมอนดองซีอิ๊ว","ข้าวหน้าปรารวม (Chirashi Don)","ข้าวหน้าทูนาและไข่กุ้ง (Negitoro Don)"]
+  },
+  "จานเส้น (Noodles)":{
+    "ราเมน & ซุป (Ramen & Soup Noodles)":["ทงคตสึราเมน (น้ำซุปกระดูกหมู)","โชยุราเมน (น้ำซุปซีอิ๊ว)","มิโซะราเมน (น้ำซุปเต้าเจี้ยว)","อุด้งเนื้อซุปโชยุ"],
+    "ผัด & เส้นเย็น (Stir-fried & Cold Noodles)":["ยากิโซบะ","ซารุโซบะ (โซบะเย็น)","ฮิยาชิ ชูการะ (บะหมี่เย็นทรงเครื่อง)"]
+  },
+  "ซูชิ, ซาชิมิ & ของทานเล่น (Sushi, Sashimi & Sides)":{
+    "ซูชิ & ซาชิมิ (Sushi & Sashimi)":["ซาชิมิแซลมอน","ซูชิหน้าชูโทโร่","ข้าวห่อสาหร่ายไส้แซลมอนเบิร์นไฟ (Salmon Aburi Roll)","แคลิฟอร์เนียโรล (California Roll)"],
+    "ทอด & ย่างทานเล่น (Fried & Snacks)":["ทาโกยากิ","เกี๊ยวซ่า (Gyoza)","เทมปุระกุ้ง","หนังไก่ย่างเสียบไม้ (Yakitori)"]
+  }
+},
+"อาหารเกาหลี (Korean Cuisine)":{
+  "จานข้าว (Rice Dishes)":{
+    "คลุก & ผัด (Mixed & Stir-fried Rice)":["บิบิมบับ (ข้าวยำเกาหลี)","ข้าวผัดกิมจิไข่ดาว"],
+    "ข้าวราดซอส (Topped Rice)":["ข้าวหน้าหมูผัดซอสโคชูจัง (Jeyuk Deopbap)","ข้าวหน้าเนื้อผัดซอสบูลโกกิ (Bulgogi Deopbap)"]
+  },
+  "จานเส้น (Noodles)":{
+    "ซอสดำ & ต้ม (Black Sauce & Soup)":["จาจังมยอน (บะหมี่ซอสดำ)","รามยอนต้มยำเกาหลี"],
+    "ผัด & เส้นเย็น (Stir-fried & Cold Noodles)":["จับแช (ผัดวุ้นเส้นเกาหลี)","หมี่เย็นเกาหลี (Mul-naengmyeon)"]
+  },
+  "ซุป & หม้อไฟ (Stews & Hotpots)":{
+    "ซุปแกง (Stews)":["ซุนดูบูจิเก (แกงเต้าหู้อ่อน)","กิมจิจิเก (แกงส้มกิมจิ)"],
+    "หม้อไฟ & ตุ๋น (Hotpot & Whole Soups)":["บูแดจิเก (หม้อไฟเกาหลี)","ซัมเกทัง (ไก่ตุ๋นโสม)"]
+  },
+  "ทอด & สตรีทฟู้ด (Fried & Street Food)":{
+    "ไก่ทอดเกาหลี (Korean Fried Chicken)":["ไก่ทอดซอสเกาหลี (Yangnyeom Chicken)","ไก่ทอดซอสกระเทียมโชยุ (Ganjang Chicken)"],
+    "ย่าง & สตรีทฟู้ด (Grilled & Snacks)":["หมูสามชั้นย่างเกาหลี (Samgyeopsal)","ต๊อกบกกีซอสเผ็ด","พาจอน (พิซซ่าต้นหอมเกาหลี)","คอร์นด็อกชีสเกาหลี"]
+  }
+},
+"อาหารจีน (Chinese Cuisine)":{
+  "ติ่มซำ & เมนูแป้ง (Dim Sum & Buns)":{
+    "นึ่ง (Steamed)":["ซาลาเปาหมูแดง","ขนมจีบกุ้ง","เสี่ยวหลงเปา","ฮะเก๋ากุ้ง"],
+    "ทอด & จีบ (Fried & Pan-fried)":["เผือกทอดติ่มซำ","กุยช่ายทอด"]
+  },
+  "จานข้าว & จานเส้น (Rice & Noodles)":{
+    "ผัด (Stir-fried)":["ข้าวผัดหยางโจว","ผัดหมี่ซั่ว"],
+    "น้ำ & ราดหน้า (Soup & Gravy Noodles)":["บะหมี่เนื้อเสฉวน","ราดหน้าหมูหมักสไตล์ฮ่องกง"]
+  },
+  "กับข้าว & หม้อไฟ (Dishes & Hotpot)":{
+    "ซุป & หม้อไฟ (Soups & Hotpot)":["หมาล่าหม้อไฟ","ซุปกระดูกหมูหมาล่า","ซุปเยื่อไผ่"],
+    "ผัด, อบ & ย่าง (Stir-fried, Baked & Roast)":["เต้าหู้มาโบ (Mapo Tofu)","เป็ดปักกิ่ง","หมูกรอบฮ่องกง","ไก่ผัดพริกแห้งเสฉวน (Lazi Ji)","หมูเปรี้ยวหวาน"]
+  }
+},
+"อาหารตะวันตก (Western Cuisine)":{
+  "พาสต้า & พิซซ่า (Pasta & Pizza)":{
+    "พาสต้าซอสครีม & น้ำมัน (Cream & Oil Pasta)":["สปาเกตตีคาร์โบนารา","สปาเกตตีผัดขี้เมาเบคอน","เพสโต้พาสต้ากุ้ง","สปาเกตตีผัดพริกแห้งเบคอน (Spaghetti Aglio Olio)"],
+    "พาสต้าซอสมะเขือเทศ & อบ (Tomato & Baked Pasta)":["สปาเกตตีโบโลเนสเนื้อ","ลาซานญ่าเนื้อ","มักกะโรนีอบชีส (Mac & Cheese)"],
+    "พิซซ่า (Pizza)":["พิซซ่าหน้าฮาวายเอี้ยน","พิซซ่าหน้ามาร์เกริตา","พิซซ่าหน้าทรัฟเฟิล","พิซซ่าหน้าเปปเปอโรนี"]
+  },
+  "สเต๊ก & เบอร์เกอร์ (Steaks & Burgers)":{
+    "สเต๊ก (Steaks)":["สเต๊กเนื้อริบอาย","สเต๊กพอร์คชอปซอสพริกไทยดำ","สเต๊กอกไก่ย่างสมุนไพร","สเต๊กแซลมอนย่างเนย"],
+    "เบอร์เกอร์ & แซนด์วิช (Burgers & Sandwiches)":["เบอร์เกอร์เนื้อชีส (Cheeseburger)","เบอร์เกอร์ไก่กรอบ","แซนด์วิชคลับ (Club Sandwich)","แซนด์วิชทูน่าชีสเยิ้ม"]
+  },
+  "ซุป, สลัด & ของทานเล่น (Soups, Salads & Sides)":{
+    "ซุป & สลัด (Soups & Salads)":["ซุปเห็ดทรัฟเฟิล","ซุปข้าวโพดหวาน","สลัดซีซาร์อกไก่","สลัดอกไก่ย่างซอสอิตาเลียน"],
+    "ของทานเล่นทอด & อบ (Sides & Starters)":["เฟรนช์ฟรายส์ซาวครีม","ไก่อบซอสบาร์บีคิว (BBQ Wings)","หอยแมลงภู่อบชีส","หอมทอด (Onion Rings)","ผักโขมอบชีส"]
+  }
+},
+"อาหารอินเดีย & ตะวันออกกลาง (Indian & Middle Eastern Cuisine)":{
+  "จานข้าว & แป้ง (Rice & Bread)":{
+    "ข้าวหมก (Biryani)":["ข้าวหมกไก่แบบอินเดีย (Chicken Biryani)","ข้าวหมกแกะ (Mutton Biryani)"],
+    "แป้งนาน & โรตี (Naan & Flatbreads)":["แป้งนานกระเทียม (Garlic Naan)","แป้งนานชีส (Cheese Naan)","โรตีแผ่นเปล่า"]
+  },
+  "แกง & ซุป (Curries & Gravy)":{
+    "แกงอินเดียเนื้อสัตว์ (Meat Curries)":["แกงไก่เนย (Butter Chicken)","แกงมาซาลาแพะ (Mutton Masala)"],
+    "แกงมังสวิรัติ (Vegetarian Curries)":["แกงชีสปาเอนก (Palak Paneer)","แกงถั่ว (Dal Makhani)"]
+  },
+  "ของทานเล่น & สตรีทฟู้ด (Snacks & Street Food)":{
+    "ย่าง, ทอด & ห่อ (Grilled, Fried & Wrap)":["ไก่ย่างทันดูรี (Tandoori Chicken)","ซาโมซ่ามันฝรั่ง (Samosa)","เคบับเนื้อห่อแป้ง (Beef Kebab Wrap)","ปานีปูรี (Pani Puri)"]
+  }
+},
+"อาหารเวียดนาม & อาหารเอเชียอื่นๆ (Vietnamese & Other Asian Cuisines)":{
+  "อาหารเวียดนาม (Vietnamese Cuisine)":{
+    "จานเส้น & ซุป (Noodles & Soups)":["เฝอเนื้อ (Pho Bo)","เฝอไก่ (Pho Ga)","บุ๋นจ๋า (Bun Cha)"],
+    "เมนูห่อ & ทอด (Wraps & Fried)":["แหนมเนือง","ปอเปี๊ยะสดเวียดนาม","ปอเปี๊ยะทอดเวียดนาม","บั๋นหมี่ (Banh Mi)"]
+  },
+  "อาหารเอเชียตะวันออกเฉียงใต้ (Other SEA Cuisines)":{
+    "ข้าว (Rice Dishes)":["ข้าวหมันไก่ไหหลำ (Hainanese Chicken Rice)","นาสิเลอมัก (Nasi Lemak)"],
+    "เส้น & ผัด (Noodles & Stir-fried)":["ลักซาบะหมี่แกง (Laksa)","มีโกเรง (Mie Goreng)"]
+  }
+},
+"อาหารเม็กซิกัน (Mexican Cuisine)":{
+  "ทาโก้ & ตอร์ติญ่า (Tacos & Tortilla Dishes)":{
+    "ห่อ & พับ (Wraps & Folded)":["ทาโก้เนื้อสับ (Beef Taco)","บูร์ริโตไก่ (Chicken Burrito)"],
+    "อบ & ชีส (Baked & Cheesy)":["เคซาดิญาชีสและหมู (Pork Quesadilla)","เอนชิลาดาสซอสเผ็ด (Enchiladas)"]
+  },
+  "ทานเล่น & สลัด (Snacks & Salads)":{
+    "ทอด & ดิป (Chips & Dips)":["นาโชสชีสและกัวคาโมเล (Nachos with Guacamole)"],
+    "สลัด (Salad)":["สลัดทาโก้ (Taco Salad)"]
+  }
+},
+"ของหวาน (Desserts & Bakery)":{
+  "ของหวานไทย & เอเชีย (Thai & Asian Desserts)":{
+    "ข้าวเหนียว & กะทิ (Sticky Rice & Coconut Milk)":["ข้าวเหนียวมะม่วง","ข้าวเหนียวทุเรียน","ทับทิมกรอบน้ำกะทิ","ลอดช่องสิงคโปร์","บัวลอยไข่หวาน"],
+    "น้ำแข็งใส & หวานเย็น (Shaved Ice)":["เฉาก๊วยนมสด","บิงซูสตอเบอร์รี่","บิงซูชาไทย"]
+  },
+  "เบเกอรี่ & ของหวานตะวันตก (Bakery & Western Desserts)":{
+    "เค้ก & ทาร์ต (Cakes & Tarts)":["ชีสเค้กหน้าไหม้ (Basque Burnt Cheesecake)","เค้กส้มหน้านิ่ม","ช็อกโกแลตฟัดจ์เค้ก","ทาร์ตไข่ฮ่องกง","บราวนี่ช็อกโกแลต"],
+    "ขนมปัง & วาฟเฟิล (Bread & Waffles)":["ขนมปังปิ้งเนยนมสด","โทสต์ฮันนี่ไอศกรีม","ครัวซองต์เนยสด","วาฟเฟิลไอศกรีมวนิลา"],
+    "ไอศกรีม & พุดดิ้ง (Ice Cream & Puddings)":["เจลาโต้ไอศกรีม (Gelato)","พานาคอนต้ามะม่วง","พุดดิ้งมะพร้าวอ่อน"]
+  }
+},
+"เครื่องดื่ม (Beverages)":{
+  "ชา & กาแฟ (Teas & Coffees)":{
+    "กาแฟ (Coffee)":["เอสเพรสโซเย็น","อเมริกาโน่เย็นน้ำส้ม","ลาเต้เย็น","กาแฟโบราณ (โอเลี้ยง)"],
+    "ชาใส & ชานม (Tea & Milk Tea)":["ชาไทยเย็น","ชาเขียวมัทฉะลาเต้","ชานมไข่มุกไต้หวัน","ชามะนาว"]
+  },
+  "น้ำผลไม้ & สมูทตี้ (Juices & Smoothies)":{
+    "ปั่น & โยเกิร์ต (Smoothies)":["สตอเบอร์รี่โยเกิร์ตปั่น","มะม่วงปั่นพานาคอนต้า","อะโวคาโดปั่นนมสด"],
+    "คั้นสด & สกัด (Fresh Juices)":["น้ำส้มคั้นสด","น้ำมะพร้าวสดสดชื่น"]
+  },
+  "เครื่องดื่มโซดา & สปาร์กลิ้ง (Soda & Sparkling)":{
+    "โซดาผลไม้ (Fruit Soda)":["บลูฮาวายโซดา","แดงมะนาวโซดา","ชาพีชโซดา","ลิ้นจี่โซดา"]
+  }
+}
+};
+
+let path = [];
+let selectedDish = null;
+
+function currentNode(){
+  let node = DATA;
+  for(const key of path) node = node[key];
+  return node;
+}
+
+// ---- estimation helpers (rough, deterministic guesses for decision-making — not lab-verified nutrition data) ----
+const PROTEIN_KW = [["หมูกรอบ","หมูกรอบ"],["หมูสับ","หมูสับ"],["หมูสามชั้น","หมูสามชั้น"],["หมู","เนื้อหมู"],["ไก่","เนื้อไก่"],["เนื้อวากิว","เนื้อวากิว"],["เนื้อ","เนื้อวัว"],["กุ้ง","กุ้ง"],["ปลาหมึก","ปลาหมึก"],["ปลา","เนื้อปลา"],["ปู","เนื้อปู"],["เป็ด","เนื้อเป็ด"],["ไข่เยี่ยวม้า","ไข่เยี่ยวม้า"],["ไข่","ไข่"],["ทูน่า","ปลาทูน่า"],["แซลมอน","แซลมอนดิบ/ย่าง"],["แพะ","เนื้อแพะ"],["เต้าหู้","เต้าหู้"]];
+const CARB_KW = [["ข้าวเหนียว","ข้าวเหนียว"],["ข้าว","ข้าวสวย"],["เส้นหมี่","เส้นหมี่"],["หมี่","เส้นหมี่"],["บะหมี่","เส้นบะหมี่"],["ก๋วยเตี๋ยว","เส้นก๋วยเตี๋ยว"],["อุด้ง","เส้นอุด้ง"],["โซบะ","เส้นโซบะ"],["สปาเกตตี","เส้นสปาเกตตี"],["พาสต้า","เส้นพาสต้า"],["นาน","แป้งนาน"],["โรตี","แป้งโรตี"],["ขนมปัง","ขนมปัง"],["พิซซ่า","แป้งพิซซ่า"],["ตอร์ติญ่า","แป้งตอร์ติญ่า"],["ทาโก้","แป้งทาโก้"]];
+const FLAVOR_KW = [["กะเพรา","ใบกะเพรา"],["กะทิ","กะทิ"],["ชีส","ชีส"],["ครีม","ครีม"],["มะนาว","มะนาว"],["ถั่ว","ถั่ว"],["ผัก","ผักสด"],["กระเทียม","กระเทียม"],["พริก","พริก"],["น้ำปลา","น้ำปลา"],["มะเขือเทศ","มะเขือเทศ"],["หอม","หอมใหญ่/หอมแดง"],["มะม่วง","มะม่วงสุก"],["ทุเรียน","ทุเรียน"]];
+const METHOD_KW = [["ทอด","ทอด"],["ผัด","ผัด"],["ย่าง","ย่าง"],["อบ","อบ"],["นึ่ง","นึ่ง"],["ต้ม","ต้ม/ตุ๋น"],["แกง","แกงในน้ำพริกแกง"],["ยำ","ยำ"],["ตำ","ตำ"],["ดอง","ดอง/หมัก"]];
+
+function guessIngredients(name){
+  const items = [];
+  for(const [kw,label] of PROTEIN_KW) if(name.includes(kw)){ items.push(label); break; }
+  for(const [kw,label] of CARB_KW) if(name.includes(kw)){ items.push(label); break; }
+  for(const [kw,label] of FLAVOR_KW) if(name.includes(kw)) items.push(label);
+  let method = null;
+  for(const [kw,label] of METHOD_KW) if(name.includes(kw)){ method = label; break; }
+  if(method) items.push('ปรุงแบบ' + method);
+  if(items.length===0) items.push('วัตถุดิบหลักตามชื่อเมนู (ดูรายละเอียดจากร้าน)');
+  return [...new Set(items)];
+}
+
+function estimateKcal(name){
+  let base = 420;
+  if(/ของหวาน|เค้ก|ทาร์ต|ไอศกรีม|พุดดิ้ง|วาฟเฟิล|โทสต์|ครัวซองต์|บราวนี่/.test(name)) base = 360;
+  else if(/เครื่องดื่ม|ชา|กาแฟ|โซดา|สมูทตี้|น้ำส้ม|น้ำมะพร้าว|ปั่น/.test(name)) base = 190;
+  else if(/สลัด/.test(name)) base = 280;
+  else if(/ก๋วยเตี๋ยว|ราเมน|บะหมี่|เส้น|หมี่|อุด้ง|โซบะ|พาสต้า|สปาเกตตี|จาจังมยอน/.test(name)) base = 480;
+  else if(/ข้าว/.test(name)) base = 560;
+  for(const [kw] of [["ทอด",130]]) if(name.includes('ทอด')) base += 130;
+  if(name.includes('ผัด')) base += 60;
+  if(/ย่าง|อบ/.test(name)) base += 40;
+  if(/ต้ม|แกง|ซุป|น้ำใส/.test(name)) base -= 20;
+  if(/ชีส|เนย|ครีม|กะทิ/.test(name)) base += 80;
+  if(/หมูกรอบ|สามชั้น|หม้อไฟ/.test(name)) base += 90;
+  let hash = 0; for(const c of name) hash = (hash*31 + c.charCodeAt(0)) % 97;
+  base += (hash % 40) - 20;
+  return Math.max(130, Math.round(base/10)*10);
+}
+
+function macroSplit(kcal, name){
+  let carbPct=0.5, proteinPct=0.2, fatPct=0.3;
+  if(/ของหวาน|เค้ก|ไอศกรีม|โซดา|ชา|กาแฟ|สมูทตี้|น้ำ/.test(name)) { carbPct=0.65; proteinPct=0.08; fatPct=0.27; }
+  else if(/สลัด|ต้ม|แกง|ซุป/.test(name)) { carbPct=0.35; proteinPct=0.35; fatPct=0.30; }
+  else if(/ทอด|กรอบ/.test(name)) { carbPct=0.35; proteinPct=0.25; fatPct=0.40; }
+  return {
+    carb: Math.round(kcal*carbPct/4),
+    protein: Math.round(kcal*proteinPct/4),
+    fat: Math.round(kcal*fatPct/9)
+  };
+}
+
+function exerciseMinutes(kcal){
+  const weightKg = 60; // สมมติฐานน้ำหนักตัวเฉลี่ย
+  const activities = [ ['เดินเร็ว', 4.3, '🚶'], ['วิ่งจ็อกกิ้ง', 7.0, '🏃'], ['ปั่นจักรยาน', 6.8, '🚴'] ];
+  return activities.map(([label, met, icon]) => {
+    const kcalPerMin = met * 3.5 * weightKg / 200;
+    return { label, icon, minutes: Math.max(1, Math.round(kcal / kcalPerMin)) };
+  });
+}
+
+function renderDishCard(name){
+  const contentEl = document.getElementById('content');
+  const subEl = document.getElementById('subtitle');
+  subEl.textContent = 'ข้อมูลโดยประมาณของเมนูนี้';
+  const kcal = estimateKcal(name);
+  const macro = macroSplit(kcal, name);
+  const ingredients = guessIngredients(name);
+  const ex = exerciseMinutes(kcal);
+  contentEl.innerHTML = `
+    <div class="card">
+      <h2>${name}</h2>
+      <h3>ส่วนประกอบหลัก (โดยประมาณ)</h3>
+      <ul>${ingredients.map(i=>`<li>${i}</li>`).join('')}</ul>
+      <h3>พลังงานโดยประมาณ</h3>
+      <div class="kcal-big">${kcal} kcal</div>
+      <div class="macros"><span>คาร์บ ${macro.carb}g</span><span>โปรตีน ${macro.protein}g</span><span>ไขมัน ${macro.fat}g</span></div>
+      <h3>ต้องออกกำลังกายเท่าไหร่ถึงจะเผาผลาญหมด (น้ำหนักตัวสมมติ 60 กก.)</h3>
+      <div class="exwrap">${ex.map(e=>`<div class="exrow"><span>${e.icon} ${e.label}</span><span>${e.minutes} นาที</span></div>`).join('')}</div>
+      <div class="disclaimer">*ตัวเลขทั้งหมดเป็นการประมาณการคร่าวๆ เพื่อช่วยตัดสินใจเท่านั้น ไม่ใช่ข้อมูลโภชนาการที่วัดจริง ปริมาณจริงขึ้นกับสูตรและขนาดจานของแต่ละร้าน</div>
+    </div>
+    <button class="otherbtn" id="otherDishBtn">← เลือกเมนูอื่นในหมวดนี้</button>
+  `;
+  document.getElementById('otherDishBtn').addEventListener('click', ()=>{ selectedDish = null; render(); });
+}
+
+function countDishes(node){
+  if(Array.isArray(node)) return node.length;
+  return Object.values(node).reduce((s,v)=>s+countDishes(v),0);
+}
+
+function splitName(k){
+  const m = k.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  return m ? [m[1], m[2]] : [k, ''];
+}
+
+function renderCuisineMenu(node){
+  document.getElementById('content').innerHTML = `
+    <div class="menu-card">
+      <div class="menu-title">สัญชาติอาหารวันนี้</div>
+      <div class="menu-subtitle">— กดเลือกหมวดที่อยากลิ้มลอง —</div>
+      <div class="menu-list">
+        ${Object.keys(node).map(k=>{
+          const [th,eng] = splitName(k);
+          const count = countDishes(node[k]);
+          return `<button class="menu-row" data-key="${encodeURIComponent(k)}">
+            <div class="menu-row-text"><span class="name">${th}</span>${eng?`<span class="eng">${eng}</span>`:''}</div>
+            <div class="leader"></div>
+            <div class="count">${count} เมนู</div>
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+  document.querySelectorAll('.menu-row').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      path.push(decodeURIComponent(btn.dataset.key));
+      render();
+    });
+  });
+}
+
+function render(){
+  const node = currentNode();
+  const isLeaf = Array.isArray(node);
+  document.body.classList.toggle('at-menu', path.length===0);
+  if(path.length===0){
+    renderCuisineMenu(node);
+    document.getElementById('nav').style.display = 'none';
+    return;
+  }
+  const crumbsEl = document.getElementById('crumbs');
+  const contentEl = document.getElementById('content');
+  const navEl = document.getElementById('nav');
+  const subEl = document.getElementById('subtitle');
+
+  crumbsEl.innerHTML = '<span' + (path.length===0?' class="current"':'') + '>เริ่มต้น</span>' +
+    path.map((p,i)=>`<span${i===path.length-1 && !(isLeaf && selectedDish)?' class="current"':''}>${p.split(' (')[0]}</span>`) +
+    (isLeaf && selectedDish ? `<span class="current">${selectedDish}</span>` : '');
+
+  if(isLeaf){
+    if(selectedDish){
+      renderDishCard(selectedDish);
+    } else {
+      subEl.textContent = 'เจอหมวดสุดท้ายแล้ว กดเมนูที่สนใจเพื่อดูข้อมูล';
+      contentEl.innerHTML = '<div class="dishlist">' +
+        node.map(d=>`<button class="opt dish" data-dish="${encodeURIComponent(d)}">${d}</button>`).join('') + '</div>';
+      contentEl.querySelectorAll('[data-dish]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{ selectedDish = decodeURIComponent(btn.dataset.dish); render(); });
+      });
+    }
+  } else {
+    subEl.textContent = path.length===0
+      ? 'เลือกประเภทอาหารที่อยากกิน'
+      : 'เลือกต่อไปเรื่อยๆ จนถึงเมนู';
+    contentEl.innerHTML = '<div class="grid">' +
+      Object.keys(node).map(k=>`<button class="opt" data-key="${encodeURIComponent(k)}">${k}</button>`).join('') +
+      '</div>';
+    contentEl.querySelectorAll('.opt').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        path.push(decodeURIComponent(btn.dataset.key));
+        render();
+      });
+    });
+  }
+  navEl.style.display = (path.length===0 && !selectedDish) ? 'none' : 'flex';
+}
+
+document.getElementById('backBtn').addEventListener('click',()=>{
+  if(selectedDish){ selectedDish = null; } else { path.pop(); }
+  render();
+});
+document.getElementById('homeBtn').addEventListener('click',()=>{ path = []; selectedDish = null; render(); });
+
+render();
+</script>
+</body>
+</html>
